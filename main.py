@@ -16,9 +16,11 @@ number_of_cell = 25
 
 
 pygame.init()
-score_font = pygame.font.Font("Graphics/digital-7.ttf",32)
+score_font = pygame.font.Font("Graphics/digital-7.ttf",40)
 screen = pygame.display.set_mode((cell_size*number_of_cell,cell_size*number_of_cell))
-pygame.display.set_caption("Retroid snake")
+
+
+pygame.display.set_caption("space snake")
 clock = pygame.time.Clock()
 food_surface = pygame.image.load("Graphics/food.png")
 
@@ -29,12 +31,18 @@ pygame.time.set_timer(SNAKE_UPDATE,200)
 class Food:
     def __init__(self):
         self.position = self.generate_random_cell()
+        self.sound = pygame.mixer.Sound("Sounds/eat.mp3")
+        print(f"Food position initialized at: {self.position}")
+
     def draw(self):
-        food_rect = pygame.Rect(self.position.x * cell_size,self.position.y * cell_size,cell_size,cell_size)
+        food_rect = pygame.Rect(self.position.x * cell_size, self.position.y * cell_size,cell_size, cell_size)
         screen.blit(food_surface,food_rect)
-    def generate_random_cell(self):
-        x = random.randint(0, 24)
-        y = random.randint(0, 24)
+
+    @staticmethod
+    def generate_random_cell():
+        x = random.randint(1, number_of_cell - 1)
+        y = random.randint(1, number_of_cell - 1)
+        print(f'food position at{Vector2(x,y)}')
         return Vector2(x, y)
 
 
@@ -42,10 +50,11 @@ class Snake:
     def __init__(self):
         self.body = [Vector2(6,9),Vector2(5,9),Vector2(4,9)]
         self.direction = Vector2(1,0)
+
     def draw(self):
         for i in self.body:
             snake_rect = pygame.Rect(i.x*cell_size,i.y*cell_size,cell_size,cell_size)
-            pygame.draw.rect(screen, WHITE, snake_rect,4,7)
+            pygame.draw.rect(screen, WHITE, snake_rect,2,7)
 
     def update(self):
         self.body = self.body[:-1]
@@ -92,7 +101,9 @@ class Game:
     def generate_random_pos(self):
         pos = self.food.generate_random_cell()
         if pos in self.snake.body:
-            self.food.generate_random_cell()
+
+            pos = self.food.generate_random_cell()
+            return pos
         else:
             return pos
 
@@ -112,6 +123,7 @@ class Game:
     def eat(self):
         if self.food.position == self.snake.body[0]:
             self.score.score_up()
+            self.food.sound.play()
             self.eating_direction()
             self.food.position = self.generate_random_pos()
 
