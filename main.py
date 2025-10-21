@@ -97,7 +97,8 @@ class Game:
         self.snake.reset()
         self.score.score = 0
 
-
+    def sounds(self):
+        eating_sound = self.food.sound
     def generate_random_pos(self):
         pos = self.food.generate_random_cell()
         if pos in self.snake.body:
@@ -132,6 +133,9 @@ class Game:
     def check_collision_with_tail(self):
         headless_body = self.snake.body[1:]
         if self.snake.body[0] in headless_body:
+            sound2 = pygame.mixer.Sound("Sounds/Sounds_wall.mp3")
+            sound2.play()
+
             self.game_over()
 
 
