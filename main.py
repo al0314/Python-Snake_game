@@ -13,6 +13,8 @@ WHITE = (255,255,255)
 
 cell_size = 30
 number_of_cell = 25
+width = 750
+height = 750
 
 
 pygame.init()
@@ -92,13 +94,13 @@ class Game:
         self.snake.update()
         self.eat()
         self.check_collision_with_tail()
+        self.wall_wrapper()
 
     def game_over(self):
         self.snake.reset()
         self.score.score = 0
 
-    def sounds(self):
-        eating_sound = self.food.sound
+
     def generate_random_pos(self):
         pos = self.food.generate_random_cell()
         if pos in self.snake.body:
@@ -137,6 +139,28 @@ class Game:
             sound2.play()
 
             self.game_over()
+    def wall_wrapper(self):
+        print(f'wall_wrapper is working')
+        snake_head = self.snake.body[0]
+        if snake_head.x > width // cell_size: #right_side
+            snake_head.x = 0
+            self.snake.body.insert(0,snake_head)
+            self.snake.body.pop(1)
+
+        if snake_head.x < 0 : #left_side
+            snake_head.x = width // cell_size - 1
+            self.snake.body.insert(0,snake_head)
+            self.snake.body.pop(1)
+
+        if snake_head.y > height // cell_size: #(height (pixel) // cell_size = grid conversion)
+            snake_head.y = 0
+            self.snake.body.insert(0,snake_head)
+            self.snake.body.pop(1)
+
+        if snake_head.y < 0 :
+            snake_head.y = height // cell_size - 1
+            self.snake.body.insert(0,snake_head)
+            self.snake.body.pop(1)
 
 
 #Drawing
